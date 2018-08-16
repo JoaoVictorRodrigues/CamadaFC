@@ -57,10 +57,10 @@ def main():
     txBuffer = img_file
     txLen    = len(txBuffer)
     print(txLen)
-    txLen = tam_padrao(str(txLen))
-    # Transmite dado
+    txLen2 = bytes(tam_padrao(str(txLen)), "ascii")
+    # Transmite dados
     print("tentado transmitir .... {} bytes".format(txLen))
-    com.sendData(txLen)
+    com.sendData(txLen2)
     time.sleep(2)
     com.sendData(txBuffer)
 
