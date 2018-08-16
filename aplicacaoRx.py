@@ -46,7 +46,7 @@ def main():
 
     # Faz a recepção dos dados
     print ("Recebendo dados .... ")
-    txLen = int(com.getData(6))
+    txLen, nRx2 = int(com.getData(6))
     time.sleep(2)
     rxBuffer, nRx = com.getData(txLen)
 
