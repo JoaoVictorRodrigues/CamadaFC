@@ -25,7 +25,7 @@ import binascii
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM3"                  # Windows(variacao de)
+serialName = "COM4"                  # Windows(variacao de)
 
 
 
@@ -45,14 +45,14 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
-
+    arquivo=input("Digite o nome do arquivo que deseja enviar: ")
 
     # a seguir ha um exemplo de dados sendo carregado para transmissao
     # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
     #como fazer isso
     print ("gerando dados para transmissao :")
-  
-    b = open("img.png", "rb")
+
+    b = open(arquivo, "rb")
     img_file = b.read()
     txBuffer = img_file
     txLen    = len(txBuffer)
@@ -64,7 +64,7 @@ def main():
     time.sleep(2)
     com.sendData(txBuffer)
 
-        
+
     # Atualiza dados da transmissão
     txSize = com.tx.getStatus()
 
