@@ -72,7 +72,7 @@ def main():
     print("-------------------------")
     print("Dados recebidos")
     print("-------------------------")
-    com.rx.threadKill()
+    com.disable()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":

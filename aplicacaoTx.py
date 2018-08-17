@@ -73,10 +73,9 @@ def main():
     txLen2 = bytes(tam_padrao(str(txLen)), "ascii")
     # Transmite dados
     print("tentado transmitir .... {} bytes".format(txLen))
+    start=timeit.default_timer()
     com.sendData(txLen2)
     time.sleep(2)
-
-    start=timeit.default_timer()
     com.sendData(txBuffer)
     stop=timeit.default_timer()
 
@@ -91,7 +90,7 @@ def main():
 
     print("Tempo de envio: ", stop - start)
 
-    com.tx.threadKill()
+    com.disable()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":
