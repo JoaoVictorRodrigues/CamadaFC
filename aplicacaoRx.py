@@ -16,6 +16,7 @@ import time
 import matplotlib.pyplot as plt
 import binascii
 
+
 # voce deverá descomentar e configurar a porta com através da qual ira fazer a
 # comunicaçao
 # Serial Com Port
@@ -42,18 +43,25 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
-   
+
 
     # Faz a recepção dos dados
     print ("Recebendo dados .... ")
     txLen, nRx2 = com.getData(6)
     txLen = int(txLen)
+
+    baldes=115200
+    bitrate=baldes*10
+    tamanho=txLen
+    tempo=tamanho/bitrate
+    print("O tempo esperado de envio do arquivo é: " + str(tempo))
+
     time.sleep(2)
     rxBuffer, nRx = com.getData(txLen)
 
     # log
     print ("Lido              {} bytes ".format(nRx))
-    
+
     print (rxBuffer)
 
     nf = open("imgFile1.png", "wb")

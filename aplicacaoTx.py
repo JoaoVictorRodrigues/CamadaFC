@@ -15,6 +15,8 @@ from enlace import *
 import time
 import matplotlib.pyplot as plt
 import binascii
+import os
+import timeit
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer a
 # comunicaçao
@@ -50,6 +52,17 @@ def main():
     # a seguir ha um exemplo de dados sendo carregado para transmissao
     # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
     #como fazer isso
+
+
+    #Caso algum dia decidirmos mudar o baudrate, lembrar de mudar essa variavel tambem:)
+    baldes=115200
+    bitrate=baldes*10
+    tamanho=os.stat(arquivo).st_size
+    tempo=tamanho/bitrate
+    print("O tempo esperado de envio do arquivo é: " + str(tempo))
+
+
+
     print ("gerando dados para transmissao :")
 
     b = open(arquivo, "rb")
@@ -62,7 +75,10 @@ def main():
     print("tentado transmitir .... {} bytes".format(txLen))
     com.sendData(txLen2)
     time.sleep(2)
+
+    start=timeit.default_timer()
     com.sendData(txBuffer)
+    stop=timeit.default_timer()
 
 
     # Atualiza dados da transmissão
@@ -72,6 +88,9 @@ def main():
     print("-------------------------")
     print("Dados enviados")
     print("-------------------------")
+
+    print("Tempo de envio: ", stop - start)
+
     com.tx.threadKill()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
