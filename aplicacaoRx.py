@@ -61,10 +61,9 @@ def main():
 
     # log
     print ("Lido              {} bytes ".format(nRx))
+    nome2=input("Como você gostaria de nomear o arquivo? : ")
 
-    print (rxBuffer)
-
-    nf = open("imgFile1.png", "wb")
+    nf = open(nome2, "wb")
     nf.write(rxBuffer)
     nf.close()
 
@@ -72,6 +71,9 @@ def main():
     print("-------------------------")
     print("Dados recebidos")
     print("-------------------------")
+
+
+
     com.disable()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
