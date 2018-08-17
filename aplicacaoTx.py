@@ -90,7 +90,7 @@ def main():
 
     print("Tempo de envio: ", stop - start)
 
-    com.disable()
+    com.tx.threadKill()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":
