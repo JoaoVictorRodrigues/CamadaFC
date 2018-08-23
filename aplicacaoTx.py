@@ -34,9 +34,17 @@ serialName = "COM4"                  # Windows(variacao de)
 print("porta COM aberta com sucesso")
 
 def tam_padrao(txLen): #tam_padrao é uma string
-    while len(txLen)<6:
+    txLen = str(txLen)
+    while len(txLen)<8:
         txLen = '0' + txLen
+    txLen = bytearray(txLen, "ascii")
     return txLen
+
+def organize_package(txLen, pacote):
+    head = tam_padrao(txLen)
+    dados = pacote
+    EOP = bytearray("EOP", "ascii")
+    return head+dados+EOP
 
 def main():
     # Inicializa enlace ... variavel com possui todos os metodos e propriedades do enlace, que funciona em threading
@@ -70,13 +78,18 @@ def main():
     txBuffer = img_file
     txLen    = len(txBuffer)
     print(txLen)
-    txLen2 = bytes(tam_padrao(str(txLen)), "ascii")
     # Transmite dados
     print("tentado transmitir .... {} bytes".format(txLen))
+
     start=timeit.default_timer()
-    com.sendData(txLen2)
-    time.sleep(2)
-    com.sendData(txBuffer)
+
+    package = organize_package(txLen, img_file)
+    com.sendData(package)
+
+    #com.sendData(txLen2)
+    #time.sleep(2)
+    #com.sendData(txBuffer)
+
     stop=timeit.default_timer()
 
 

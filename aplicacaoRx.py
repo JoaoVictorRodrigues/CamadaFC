@@ -32,8 +32,6 @@ serialName = "COM4"                  # Windows(variacao de)
 
 print("porta COM aberta com sucesso")
 
-
-
 def main():
     # Inicializa enlace ... variavel com possui todos os metodos e propriedades do enlace, que funciona em threading
     com = enlace(serialName)
@@ -47,17 +45,25 @@ def main():
 
     # Faz a recepção dos dados
     print ("Recebendo dados .... ")
-    txLen, nRx2 = com.getData(6)
-    txLen = int(txLen)
+
+    rxBuffer, nRx, overhead = com.getData()
+    print("Dados recebidos: ",len(rxBuffer))
+    print("Overhead: ", overhead)
+
+
+
+
+    #txLen, nRx2 = com.getData(6)
+    #txLen = int(txLen)
 
     baldes=115200
     bitrate=baldes*10
-    tamanho=txLen
+    tamanho=nRx
     tempo=tamanho/bitrate
     print("O tempo esperado de envio do arquivo é: " + str(tempo))
 
-    time.sleep(2)
-    rxBuffer, nRx = com.getData(txLen)
+    #time.sleep(2)
+    #rxBuffer, nRx = com.getData(txLen)
 
     # log
     print ("Lido              {} bytes ".format(nRx))

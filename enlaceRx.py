@@ -88,12 +88,16 @@ class RX(object):
         """ Remove n data from buffer
         """
         self.threadPause()
+
+
         b           = self.buffer[0:nData]
         self.buffer = self.buffer[nData:]
+
+        
         self.threadResume()
         return(b)
 
-    def getNData(self, size):
+    def getNData(self):
         """ Read N bytes of data from the reception buffer
 
         This function blocks until the number of bytes is received
@@ -103,10 +107,35 @@ class RX(object):
         
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
-        while(self.getBufferLen() < size):
-            time.sleep(2)                 
-        return(self.getBuffer(size))
+        while(1):
+            if self.buffer >= 8:
+                len_head = 8
+                start = len_head
+                string_eop = bytearray("EOP", "ascii")
+                package = self.buffer
 
+                head = package[:start]
+                head_str = head.decode("utf-8")
+                while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
+                    head_str = head_str[1:]
+
+                if int(head_str) == len(self.buffer):
+                    try:
+                        stop = package.index(string_eop)
+                        dados = package[start:stop]
+
+                        print("EOP está em: ", stop)
+                        print("HEAD: ", head.decode("utf-8"))
+                        EOP = package[stop:]
+                        print("EOP: ", EOP.decode("utf-8"))
+
+                        overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
+                        break
+                        
+                    except Exception as e: 
+                        print(e)
+
+        return(self.getBuffer(len(dados)), overhead)
 
     def clearBuffer(self):
         """ Clear the reception buffer
