@@ -108,7 +108,7 @@ class RX(object):
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
         while(1):
-            if self.buffer >= 8:
+            if len(self.buffer) >= 8:
                 len_head = 8
                 start = len_head
                 string_eop = bytearray("EOP", "ascii")
@@ -131,7 +131,7 @@ class RX(object):
 
                         overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
                         break
-                        
+
                     except Exception as e: 
                         print(e)
 
