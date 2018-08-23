@@ -117,18 +117,15 @@ class RX(object):
 
                 head = package[:start]
                 head_str = head.decode("utf-8")
-                print (len(self.buffer))
 
                 while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
                     head_str = head_str[1:]
                 #print( head_str +" head")
-
-                time.sleep(2)
+                time.sleep(0.5)
 
                 print (len(str(string_eop)))
 
                 if (int(head_str) + 11) == len(self.buffer):
-
                     print ("Entrou")
                     try:
                         stop = package.index(string_eop)
