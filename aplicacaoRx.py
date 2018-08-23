@@ -10,7 +10,6 @@
 
 print("comecou")
 import numpy as np
-import cv2
 from enlace import *
 import time
 import matplotlib.pyplot as plt
@@ -26,7 +25,7 @@ import binascii
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM3"                  # Windows(variacao de)
+serialName = "COM5"                  # Windows(variacao de)
 
 
 

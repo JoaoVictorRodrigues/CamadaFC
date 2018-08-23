@@ -18,7 +18,7 @@ class RX(object):
     """ This class implements methods to handle the reception
         data over the p2p fox protocol
     """
-    
+
     def __init__(self, fisica):
         """ Initializes the TX class
         """
@@ -28,9 +28,9 @@ class RX(object):
         self.threadMutex = True
         self.READLEN     = 1024
 
-    def thread(self): 
+    def thread(self):
         """ RX thread, to send data in parallel with the code
-        essa é a funcao executada quando o thread é chamado. 
+        essa é a funcao executada quando o thread é chamado.
         """
         while not self.threadStop:
             if(self.threadMutex == True):
@@ -84,16 +84,17 @@ class RX(object):
         self.threadResume()
         return(b)
 
-    def getBuffer(self, nData):
+    def getBuffer(self,nData, nHead,index_EOP):
         """ Remove n data from buffer
         """
         self.threadPause()
+        start1 = nHead
+        stop1 = index_EOP
 
-
-        b           = self.buffer[0:nData]
+        b           = self.buffer[start1:stop1]
         self.buffer = self.buffer[nData:]
 
-        
+
         self.threadResume()
         return(b)
 
@@ -104,7 +105,7 @@ class RX(object):
         """
 #        temPraLer = self.getBufferLen()
 #        print('leu %s ' + str(temPraLer) )
-        
+
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
         while(1):
@@ -116,10 +117,19 @@ class RX(object):
 
                 head = package[:start]
                 head_str = head.decode("utf-8")
+                print (len(self.buffer))
+
                 while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
                     head_str = head_str[1:]
+                #print( head_str +" head")
 
-                if int(head_str) == len(self.buffer):
+                time.sleep(2)
+
+                print (len(str(string_eop)))
+
+                if (int(head_str) + 11) == len(self.buffer):
+
+                    print ("Entrou")
                     try:
                         stop = package.index(string_eop)
                         dados = package[start:stop]
@@ -132,14 +142,12 @@ class RX(object):
                         overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
                         break
 
-                    except Exception as e: 
+                    except Exception as e:
                         print(e)
 
-        return(self.getBuffer(len(dados)), overhead)
+        return(self.getBuffer(len(dados),start,stop), overhead)
 
     def clearBuffer(self):
         """ Clear the reception buffer
         """
         self.buffer = b""
-
-
