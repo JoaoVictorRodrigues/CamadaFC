@@ -91,3 +91,41 @@ class TX(object):
         """
         return(self.threadMutex)
 
+    def check_EOP(self, pacote, EOP):
+        pacote2 = pacote
+        index_list = []
+        try:
+            print("Checando Stuffing", len(pacote))
+            if pacote2.index(EOP) < len(pacote):
+                while(1):
+                    try:
+                        index = pacote2.index(EOP)
+                        index_list.append(index)
+                        pacote2 = pacote[index+len(EOP):]
+                        print("EOPs repetidos encontrados: ", index_list)
+                        if pacote2.index(EOP) < len(pacote) - 16:
+                            continue
+                    except Exception as e:
+                        return True, index_list
+        except Exception as e:
+            return False, index_list
+
+
+    def byte_stuffing(self, index_list, pacote, EOP):
+        ok = bytearray("OK", "ascii") 
+        for index in index_list:
+            pacote[index+len(EOP):index+len(EOP)] = ok
+        return pacote
+
+    def tam_padrao(self, txLen): #tam_padrao é uma string
+        txLen = str(txLen)
+        while len(txLen)<8:
+            txLen = '0' + txLen
+        txLen = bytearray(txLen, "ascii")
+        return txLen
+
+    def organize_package(self, txLen, pacote):
+        head = self.tam_padrao(txLen)
+        dados = pacote
+        EOP = bytearray("EOP", "ascii")
+        return head+dados+EOP

@@ -98,6 +98,46 @@ class RX(object):
         self.threadResume()
         return(b)
 
+    def check_oks(self, pacote,eop_ok):
+        pacote2 = pacote
+        index_list = []
+        try:
+            print("Checando Stuffing", len(pacote))
+            if pacote2.index(eop_ok) < len(pacote):
+                while(1):
+                    try:
+                        index = pacote2.index(eop_ok)
+                        index_list.append(index)
+                        pacote2 = pacote[index+len(eop_ok):]
+                        print("EOPs repetidos encontrados: ", index_list)
+                        if pacote2.index(eop_ok) < len(pacote)-8:
+                            continue
+                    except Exception as e:
+                        return True, index_list
+        except Exception as e:
+            return False, index_list
+
+    def ignore_Stuffing(self, pacote, index_list, string_eop): #Essa função retorna um pacote sem o intervalo em que os Stuffings se encontram
+        pacote2 = pacote
+        while(1):
+            try:
+                index = pacote2.index(string_eop)
+                index_list.append(index)
+                if index in index_list:
+                    pacote2 = pacote[index+len(string_eop):]
+                    continue
+            except Exception as e:
+                return index #Retorna o index do eop que não está na lista do repetidos
+        
+    def remove_oks(self, index_list, pacote,string_eop):
+        print("Removing Stuffing")
+        pacote2 = bytearray(pacote)
+        eop_ok = string_eop + bytearray("OK","ascii")
+
+        for index in index_list:
+            pacote2[index+len(eop_ok):index+len(eop_ok)] = string_eop
+        return pacote2
+
     def getNData(self):
         """ Read N bytes of data from the reception buffer
 
@@ -115,7 +155,6 @@ class RX(object):
                 string_eop = bytearray("EOP", "ascii")
                 eop_ok = string_eop + bytearray("OK","ascii")
 
-                #print ("EOP_OK: " + eop_ok)
                 package = self.buffer
                 head = package[:start]
                 head_str = head.decode("utf-8")
@@ -126,10 +165,15 @@ class RX(object):
 
                 print (len(str(string_eop)))
 
+                Stuffing, index_list = self.check_oks(package, eop_ok)
+                if Stuffing == True:
+                    print("Stuffing True")
+                    package = self.remove_oks(index_list, package, string_eop)
+
                 if (int(head_str) + 11) == len(self.buffer):
                     print ("Entrou")
                     try:
-                        stop = package.index(string_eop)
+                        stop = self.ignore_Stuffing(package, index_list, string_eop)
                         while stop == package.index(eop_ok):
                             stop.replace(eop_ok,string_eop)
                             stop = package.index(string_eop)
