@@ -66,6 +66,10 @@ def main():
             print ("Lido              {} bytes ".format(nRx))
             nome2=input("Como você gostaria de nomear o arquivo? : ")
 
+            txLen = bytearray("5", "ascii")
+            package = com.tx.organize_package(txLen, img_file, 5)
+            com.sendData(package)
+
             nf = open(nome2, "wb")
             nf.write(rxBuffer)
             nf.close()
@@ -75,9 +79,11 @@ def main():
             print("Dados recebidos")
             print("-------------------------")
 
+
             com.disable()
         else:
-            
+            txLen = bytearray("6", "ascii")
+
 
     else:
         com.disable()

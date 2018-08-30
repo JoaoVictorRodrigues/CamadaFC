@@ -161,22 +161,28 @@ class RX(object):
 
                 while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
                     head_str = head_str[1:]
-                time.sleep(0.05)
-
-                print (len(str(string_eop)))
+                time.sleep(0.01)
 
                 Stuffing, index_list = self.check_oks(package, eop_ok)
                 if Stuffing == True:
                     print("Stuffing True")
                     package = self.remove_oks(index_list, package, string_eop)
 
-                if (int(head_str) + 11) == len(self.buffer):
+                if (int(head_str) + 11) == len(package):
                     print ("Entrou")
                     try:
-                        stop = self.ignore_Stuffing(package, index_list, string_eop)
-                        while stop == package.index(eop_ok):
-                            stop.replace(eop_ok,string_eop)
+                        print(package)
+                        if Stuffing == True:
+                            stop = self.ignore_Stuffing(package, index_list, string_eop)
+                            while stop == package.index(eop_ok):
+                                stop.replace(eop_ok,string_eop)
+                                stop = package.index(string_eop)
+                        else:
                             stop = package.index(string_eop)
+                            print("stop1")
+                            print(stop)
+                            print("stop2")
+
                         dados = package[start:stop]
 
                         print("EOP está em: ", stop)

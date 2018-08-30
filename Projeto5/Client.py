@@ -61,35 +61,46 @@ def main():
     img_file = b.read()
     txBuffer = img_file
     txLen    = len(txBuffer)
-    print(txLen)
-    # Transmite dados
-    print("tentado transmitir .... {} bytes".format(txLen))
 
-    start=timeit.default_timer()
+    tipo5 = bytearray("5", "ascii")
+    tipo6 = bytearray("6", "ascii")
+    while(True):
+        print(txLen)
+        # Transmite dados
+        print("tentado transmitir .... {} bytes".format(txLen))
 
-    Synched = com.Synch_Client()
+        start=timeit.default_timer()
 
-    if Synched == True:
-        package = com.tx.organize_package(txLen, img_file, 4) #4 é o tipo da mensagem
-        com.sendData(package)
+        Synched = com.Synch_Client()
 
-        stop=timeit.default_timer()
+        timeout = time.time() + 5
+        if Synched == True:
+            package = com.tx.organize_package(txLen, img_file, 4) #4 é o tipo da mensagem
+            com.sendData(package)
+
+            stop=timeit.default_timer()
 
 
-        # Atualiza dados da transmissão
-        txSize = com.tx.getStatus()
+            # Atualiza dados da transmissão
+            txSize = com.tx.getStatus()
 
-        # Encerra comunicação
-        print("-------------------------")
-        print("Dados enviados")
-        print("-------------------------")
+            # Encerra comunicação
+            print("-------------------------")
+            print("Dados enviados")
+            print("-------------------------")
 
-        print("Tempo de envio: ", stop - start)
+            print("Tempo de envio: ", stop - start)
 
-        com.tx.threadKill()
-    
-    else:
-        com.tx.threadKill()
+            received = com.getData()
+            if (received == tipo5):
+                com.tx.threadKill()
+                break
+            else if (received == tipo6):
+                continue
+        
+        else:
+            com.tx.threadKill()
+            break
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":

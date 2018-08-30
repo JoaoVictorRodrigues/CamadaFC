@@ -102,4 +102,5 @@ class enlace(object):
                         return True
                     else if time.time() > timeout:
                         print("Erro")
+                        break
         return False
