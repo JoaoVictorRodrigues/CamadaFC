@@ -10,10 +10,13 @@
 
 print("comecou")
 import numpy as np
+#import cv2
 from enlace import *
 import time
 import matplotlib.pyplot as plt
 import binascii
+import os
+import timeit
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer a
 # comunicaçao
@@ -26,6 +29,8 @@ import binascii
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 serialName = "COM6"                  # Windows(variacao de)
 
+
+
 print("porta COM aberta com sucesso")
 
 def main():
@@ -37,41 +42,54 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
+    arquivo=input("Digite o nome do arquivo que deseja enviar: ")
 
+    # a seguir ha um exemplo de dados sendo carregado para transmissao
+    # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
+    #como fazer isso
 
-    # Faz a recepção dos dados
-    print ("Recebendo dados .... ")
-
-    rxBuffer, nRx, overhead = com.getData()
-    print("Dados recebidos: ",len(rxBuffer))
-    print("Overhead: ", overhead)
-
-    #txLen, nRx2 = com.getData(6)
-    #txLen = int(txLen)
-
+    #Caso algum dia decidirmos mudar o baudrate, lembrar de mudar essa variavel tambem:)
     baldes=115200
     bitrate=baldes*10
-    tamanho=nRx
+    tamanho=os.stat(arquivo).st_size
     tempo=tamanho/bitrate
     print("O tempo esperado de envio do arquivo é: " + str(tempo))
 
-    #time.sleep(2)
-    #rxBuffer, nRx = com.getData(txLen)
+    print ("gerando dados para transmissao :")
 
-    # log
-    print ("Lido              {} bytes ".format(nRx))
-    nome2=input("Como você gostaria de nomear o arquivo? : ")
+    b = open(arquivo, "rb")
+    img_file = b.read()
+    txBuffer = img_file
+    txLen    = len(txBuffer)
+    print(txLen)
+    # Transmite dados
+    print("tentado transmitir .... {} bytes".format(txLen))
 
-    nf = open(nome2, "wb")
-    nf.write(rxBuffer)
-    nf.close()
+    start=timeit.default_timer()
 
-    # Encerra comunicação
-    print("-------------------------")
-    print("Dados recebidos")
-    print("-------------------------")
+    Synched = com.Synch_Client()
 
-    com.disable()
+    if Synched == True:
+        package = com.tx.organize_package(txLen, img_file, 4) #4 é o tipo da mensagem
+        com.sendData(package)
+
+        stop=timeit.default_timer()
+
+
+        # Atualiza dados da transmissão
+        txSize = com.tx.getStatus()
+
+        # Encerra comunicação
+        print("-------------------------")
+        print("Dados enviados")
+        print("-------------------------")
+
+        print("Tempo de envio: ", stop - start)
+
+        com.tx.threadKill()
+    
+    else:
+        com.tx.threadKill()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":

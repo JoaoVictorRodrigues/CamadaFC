@@ -27,6 +27,7 @@ class RX(object):
         self.threadStop  = False
         self.threadMutex = True
         self.READLEN     = 1024
+        self.head_match = False
 
     def thread(self):
         """ RX thread, to send data in parallel with the code
@@ -158,9 +159,10 @@ class RX(object):
                 package = self.buffer
                 head = package[:start]
                 head_str = head.decode("utf-8")
-
-                while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
-                    head_str = head_str[1:]
+                
+                head_str = head_str[3:] #Definimos que os 5 últimos bytes representam o tamanho
+                #while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
+                #    head_str = head_str[1:]
                 time.sleep(0.05)
 
                 print (len(str(string_eop)))
@@ -170,7 +172,8 @@ class RX(object):
                     print("Stuffing True")
                     package = self.remove_oks(index_list, package, string_eop)
 
-                if (int(head_str) + 11) == len(self.buffer):
+                if (int(head_str) + 11) == len(package):
+                    self.head_match = True #LEMBRAR DE MUDAR ISSO NO TESTE DO PROJETO 4 PACKAGE =! SELF.BUFFER
                     print ("Entrou")
                     try:
                         stop = self.ignore_Stuffing(package, index_list, string_eop)
@@ -184,7 +187,7 @@ class RX(object):
                         EOP = package[stop:]
                         print("EOP: ", EOP.decode("utf-8"))
 
-                        overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
+                        overhead = (len(dados)/len(package)) *100 #Cálculo do overhead
                         break
 
                     except Exception as e:

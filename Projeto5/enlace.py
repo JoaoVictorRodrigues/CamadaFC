@@ -27,6 +27,11 @@ class enlace(object):
     def __init__(self, name):
         """ Initializes the enlace class
         """
+        self.tipo1 = bytearray("1", "ascii")
+        self.tipo2 = bytearray("2", "ascii")
+        self.tipo3 = bytearray("3", "ascii")
+        self.tipo4 = bytearray("4", "ascii")
+
         self.fisica      = fisica(name)
         self.rx          = RX(self.fisica)
         self.tx          = TX(self.fisica)
@@ -63,3 +68,38 @@ class enlace(object):
         data, overhead = self.rx.getNData()
         
         return(data, len(data), overhead)
+
+    def Synch_Client(self):
+        timeout = time.time() + 5 
+        #Etapa 1
+        txLen = len(self.tipo1)
+        package = self.tx.organize_package(txLen, self.tipo1, 1)
+        self.sendData(package)
+        while(True):
+            received = self.getData()
+            if received == self.tipo2:
+                txLen = len(self.tipo3)
+                package = self.tx.organize_package(txLen, self.tipo3, 3)
+                self.sendData(package)
+                return True
+
+            else if time.time() > timeout:
+                print("Erro")
+        return False
+    
+    def Synch_Server(self):
+        timeout = time.time() + 5
+        #Etapa 1
+        txLen = len(self.tipo2)
+        while(True):
+            received = self.getData()
+            if (received == self.tipo1):
+                package = self.tx.organize_package(txLen, self.tipo2, 2)
+                self.sendData(package)
+                while(True):
+                    received = self.getData()
+                    if(received == self.tipo3:
+                        return True
+                    else if time.time() > timeout:
+                        print("Erro")
+        return False

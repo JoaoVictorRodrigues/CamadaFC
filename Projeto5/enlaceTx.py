@@ -29,7 +29,6 @@ class TX(object):
         self.threadMutex = False
         self.threadStop  = False
 
-
     def thread(self):
         """ TX thread, to send data in parallel with the code
         """
@@ -117,15 +116,17 @@ class TX(object):
             pacote[index+len(EOP):index+len(EOP)] = ok
         return pacote
 
-    def tam_padrao(self, txLen): #tam_padrao é uma string
+    def tam_padrao(self, txLen, msg_type): #tam_padrao é uma string
         txLen = str(txLen)
-        while len(txLen)<8:
+        while len(txLen)<7:
             txLen = '0' + txLen
+        txLen = str(msg_type) + txLen
         txLen = bytearray(txLen, "ascii")
         return txLen
 
-    def organize_package(self, txLen, pacote):
-        head = self.tam_padrao(txLen)
+    def organize_package(self, txLen, pacote, msg_type):
+        head = self.tam_padrao(txLen, msg_type)
         dados = pacote
         EOP = bytearray("EOP", "ascii")
         return head+dados+EOP
+
