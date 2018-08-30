@@ -10,13 +10,11 @@
 
 print("comecou")
 import numpy as np
-#import cv2
+import cv2
 from enlace import *
 import time
 import matplotlib.pyplot as plt
 import binascii
-import os
-import timeit
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer a
 # comunicaçao
@@ -27,11 +25,13 @@ import timeit
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM6"                  # Windows(variacao de)
+serialName = "COM4"                  # Windows(variacao de)
 
 
 
 print("porta COM aberta com sucesso")
+
+
 
 def main():
     # Inicializa enlace ... variavel com possui todos os metodos e propriedades do enlace, que funciona em threading
@@ -42,48 +42,55 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
-    arquivo=input("Digite o nome do arquivo que deseja enviar: ")
+
 
     # a seguir ha um exemplo de dados sendo carregado para transmissao
     # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
     #como fazer isso
-
-    #Caso algum dia decidirmos mudar o baudrate, lembrar de mudar essa variavel tambem:)
-    baldes=115200
-    bitrate=baldes*10
-    tamanho=os.stat(arquivo).st_size
-    tempo=tamanho/bitrate
-    print("O tempo esperado de envio do arquivo é: " + str(tempo))
-
     print ("gerando dados para transmissao :")
-
-    b = open(arquivo, "rb")
+  
+   
+    #ListTxBuffer =list()
+    #for x in range(0,20):
+    #   ListTxBuffer.append(x)
+    #b = cv2.imread('img.png',0)
+    b = open("img.png", "rb")
     img_file = b.read()
+    #txBuffer = bytes(b) 
     txBuffer = img_file
     txLen    = len(txBuffer)
     print(txLen)
-    # Transmite dados
+
+    # Transmite dado
     print("tentado transmitir .... {} bytes".format(txLen))
+    com.sendData(txBuffer)
 
-    start=timeit.default_timer()
-
-    package = com.tx.organize_package(txLen, img_file)
-    com.sendData(package)
-
-    stop=timeit.default_timer()
-
-
+        
     # Atualiza dados da transmissão
     txSize = com.tx.getStatus()
+   
+
+    # Faz a recepção dos dados
+    print ("Recebendo dados .... ")
+    bytesSeremLidos=com.rx.getBufferLen()
+  
+        
+    rxBuffer, nRx = com.getData(txLen)
+
+    # log
+    print ("Lido              {} bytes ".format(nRx))
+    
+    print (rxBuffer)
+
+    nf = open("imgFile1.png", "wb")
+    nf.write(rxBuffer)
+    nf.close()
 
     # Encerra comunicação
     print("-------------------------")
-    print("Dados enviados")
+    print("Comunicação encerrada")
     print("-------------------------")
-
-    print("Tempo de envio: ", stop - start)
-
-    com.tx.threadKill()
+    com.disable()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":
