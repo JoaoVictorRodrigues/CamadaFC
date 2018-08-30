@@ -95,7 +95,7 @@ def main():
             if (received == tipo5):
                 com.tx.threadKill()
                 break
-            else if (received == tipo6):
+            elif (received == tipo6):
                 continue
         
         else:

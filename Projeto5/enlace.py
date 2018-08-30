@@ -83,7 +83,7 @@ class enlace(object):
                 self.sendData(package)
                 return True
 
-            else if time.time() > timeout:
+            elif time.time() > timeout:
                 print("Erro")
         return False
     
@@ -98,9 +98,9 @@ class enlace(object):
                 self.sendData(package)
                 while(True):
                     received = self.getData()
-                    if(received == self.tipo3:
+                    if(received == self.tipo3):
                         return True
-                    else if time.time() > timeout:
+                    elif time.time() > timeout:
                         print("Erro")
                         break
         return False
