@@ -91,7 +91,7 @@ def main():
 
             print("Tempo de envio: ", stop - start)
 
-            received = com.getData()
+            received, nRx, overhead = com.getData()
             if (received == tipo5):
                 com.tx.threadKill()
                 break

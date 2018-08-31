@@ -77,7 +77,7 @@ class enlace(object):
         package = self.tx.organize_package(txLen, self.tipo1, 1)
         self.sendData(package)
         while(True):
-            received = self.getData()
+            received , nRx, overhead = self.getData()
             if received == self.tipo2:
                 txLen = len(self.tipo3)
                 package = self.tx.organize_package(txLen, self.tipo3, 3)
@@ -95,13 +95,14 @@ class enlace(object):
         print("Synching1")
         txLen = len(self.tipo2)
         while(True):
-            received = self.getData()
+            print("Entrou no while")
+            received, nRx, overhead = self.getData()
             if (received == self.tipo1):
                 package = self.tx.organize_package(txLen, self.tipo2, 2)
                 self.sendData(package)
                 print("Synching2")
                 while(True):
-                    received = self.getData()
+                    received, nRx, overhead = self.getData()
                     if(received == self.tipo3):
                         return True
                     elif time.time() > timeout:
