@@ -157,6 +157,7 @@ class RX(object):
                 eop_ok = string_eop + bytearray("OK","ascii")
 
                 package = self.buffer
+                self.buffer = b""
                 head = package[:start]
                 head_str = head.decode("utf-8")
                 
@@ -173,7 +174,7 @@ class RX(object):
                     package = self.remove_oks(index_list, package, string_eop)
 
                 if (int(head_str) + 11) == len(package):
-                    self.head_match = True #LEMBRAR DE MUDAR ISSO NO TESTE DO PROJETO 4 PACKAGE =! SELF.BUFFER
+                    self.head_match = True 
                     print ("Entrou")
                     try:
                         if Stuffing == True:
@@ -194,13 +195,13 @@ class RX(object):
                         EOP = package[stop:]
                         print("EOP: ", EOP.decode("utf-8"))
 
-                        overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
+                        overhead = (len(dados)/len(package)) *100 #Cálculo do overhead
                         break
 
                     except Exception as e:
                         print(e)
 
-        return(self.getBuffer(len(dados),start,stop), overhead)
+        return(dados, overhead)
 
     def clearBuffer(self):
         """ Clear the reception buffer

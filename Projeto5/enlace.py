@@ -73,14 +73,14 @@ class enlace(object):
         timeout = time.time() + 5 
         #Etapa 1
         print("Synching1")
-        txLen = len(self.tipo1)
-        package = self.tx.organize_package(txLen, self.tipo1, 1)
+        txLen1 = len(self.tipo1)
+        package = self.tx.organize_package(txLen1, self.tipo1, 1)
         self.sendData(package)
         while(True):
             received , nRx, overhead = self.getData()
             if received == self.tipo2:
-                txLen = len(self.tipo3)
-                package = self.tx.organize_package(txLen, self.tipo3, 3)
+                txLen3 = len(self.tipo3)
+                package = self.tx.organize_package(txLen3, self.tipo3, 3)
                 self.sendData(package)
                 print("Synching2")
                 return True
@@ -93,17 +93,18 @@ class enlace(object):
         timeout = time.time() + 5
         #Etapa 1
         print("Synching1")
-        txLen = len(self.tipo2)
+        txLen2 = len(self.tipo2)
         while(True):
             print("Entrou no while")
             received, nRx, overhead = self.getData()
             if (received == self.tipo1):
-                package = self.tx.organize_package(txLen, self.tipo2, 2)
+                package = self.tx.organize_package(txLen2, self.tipo2, 2)
                 self.sendData(package)
                 print("Synching2")
                 while(True):
                     received, nRx, overhead = self.getData()
                     if(received == self.tipo3):
+                        print("Synching Done")
                         return True
                     elif time.time() > timeout:
                         print("Erro")
