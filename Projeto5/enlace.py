@@ -72,6 +72,7 @@ class enlace(object):
     def Synch_Client(self):
         timeout = time.time() + 5 
         #Etapa 1
+        print("Synching1")
         txLen = len(self.tipo1)
         package = self.tx.organize_package(txLen, self.tipo1, 1)
         self.sendData(package)
@@ -81,6 +82,7 @@ class enlace(object):
                 txLen = len(self.tipo3)
                 package = self.tx.organize_package(txLen, self.tipo3, 3)
                 self.sendData(package)
+                print("Synching2")
                 return True
 
             elif time.time() > timeout:
@@ -90,12 +92,14 @@ class enlace(object):
     def Synch_Server(self):
         timeout = time.time() + 5
         #Etapa 1
+        print("Synching1")
         txLen = len(self.tipo2)
         while(True):
             received = self.getData()
             if (received == self.tipo1):
                 package = self.tx.organize_package(txLen, self.tipo2, 2)
                 self.sendData(package)
+                print("Synching2")
                 while(True):
                     received = self.getData()
                     if(received == self.tipo3):

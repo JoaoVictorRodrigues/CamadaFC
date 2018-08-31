@@ -24,7 +24,7 @@ import binascii
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM5"                  # Windows(variacao de)
+serialName = "COM4"                  # Windows(variacao de)
 
 print("porta COM aberta com sucesso")
 
@@ -38,51 +38,52 @@ def main():
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
 
+    while(True):
 
-    # Faz a recepção dos dados
-    print ("Recebendo dados .... ")
+        Synched = com.Synch_Server()
 
-    Synched = com.Synch_Server()
+        if Synched == True:
+            # Faz a recepção dos dados
+            print ("Recebendo dados .... ")
+            
+            rxBuffer, nRx, overhead = com.getData()
+            if com.rx.head_match == True:
+                print("Dados recebidos: ",len(rxBuffer))
+                print("Overhead: ", overhead)
 
-    if Synched == True:
-        rxBuffer, nRx, overhead = com.getData()
-        if com.rx.head_match == True:
-            print("Dados recebidos: ",len(rxBuffer))
-            print("Overhead: ", overhead)
+                #txLen, nRx2 = com.getData(6)
+                #txLen = int(txLen)
 
-            #txLen, nRx2 = com.getData(6)
-            #txLen = int(txLen)
+                baldes=115200
+                bitrate=baldes*10
+                tamanho=nRx
+                tempo=tamanho/bitrate
+                print("O tempo esperado de envio do arquivo é: " + str(tempo))
 
-            baldes=115200
-            bitrate=baldes*10
-            tamanho=nRx
-            tempo=tamanho/bitrate
-            print("O tempo esperado de envio do arquivo é: " + str(tempo))
+                #time.sleep(2)
+                #rxBuffer, nRx = com.getData(txLen)
 
-            #time.sleep(2)
-            #rxBuffer, nRx = com.getData(txLen)
+                # log
+                print ("Lido              {} bytes ".format(nRx))
+                nome2=input("Como você gostaria de nomear o arquivo? : ")
 
-            # log
-            print ("Lido              {} bytes ".format(nRx))
-            nome2=input("Como você gostaria de nomear o arquivo? : ")
+                txLen = bytearray("5", "ascii")
+                package = com.tx.organize_package(txLen, img_file, 5)
+                com.sendData(package)
 
-            txLen = bytearray("5", "ascii")
-            package = com.tx.organize_package(txLen, img_file, 5)
-            com.sendData(package)
+                nf = open(nome2, "wb")
+                nf.write(rxBuffer)
+                nf.close()
 
-            nf = open(nome2, "wb")
-            nf.write(rxBuffer)
-            nf.close()
-
-            # Encerra comunicação
-            print("-------------------------")
-            print("Dados recebidos")
-            print("-------------------------")
+                # Encerra comunicação
+                print("-------------------------")
+                print("Dados recebidos")
+                print("-------------------------")
 
 
-            com.disable()
-        else:
-            txLen = bytearray("6", "ascii")
+                com.disable()
+            else:
+                txLen = bytearray("6", "ascii")
 
 
     else:

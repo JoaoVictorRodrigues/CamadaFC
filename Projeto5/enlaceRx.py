@@ -176,10 +176,17 @@ class RX(object):
                     self.head_match = True #LEMBRAR DE MUDAR ISSO NO TESTE DO PROJETO 4 PACKAGE =! SELF.BUFFER
                     print ("Entrou")
                     try:
-                        stop = self.ignore_Stuffing(package, index_list, string_eop)
-                        while stop == package.index(eop_ok):
-                            stop.replace(eop_ok,string_eop)
+                        if Stuffing == True:
+                            stop = self.ignore_Stuffing(package, index_list, string_eop)
+                            while stop == package.index(eop_ok):
+                                stop.replace(eop_ok,string_eop)
+                                stop = package.index(string_eop)
+                        else:
                             stop = package.index(string_eop)
+                            print("stop1")
+                            print(stop)
+                            print("stop2")
+
                         dados = package[start:stop]
 
                         print("EOP está em: ", stop)
@@ -187,7 +194,7 @@ class RX(object):
                         EOP = package[stop:]
                         print("EOP: ", EOP.decode("utf-8"))
 
-                        overhead = (len(dados)/len(package)) *100 #Cálculo do overhead
+                        overhead = (1-(len(dados)/len(package))) *100 #Cálculo do overhead
                         break
 
                     except Exception as e:
