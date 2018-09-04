@@ -66,6 +66,8 @@ class enlace(object):
         """
         print('entrou na leitura e tentara ler ')
         data, overhead = self.rx.getNData()
+
+        self.rx.clearBuffer()
         
         return(data, len(data), overhead)
 
@@ -83,6 +85,8 @@ class enlace(object):
                 package = self.tx.organize_package(txLen3, self.tipo3, 3)
                 self.sendData(package)
                 print("Synching2")
+                print("Synching Done")
+                self.rx.clearBuffer()
                 return True
 
             elif time.time() > timeout:
@@ -95,7 +99,6 @@ class enlace(object):
         print("Synching1")
         txLen2 = len(self.tipo2)
         while(True):
-            print("Entrou no while")
             received, nRx, overhead = self.getData()
             if (received == self.tipo1):
                 package = self.tx.organize_package(txLen2, self.tipo2, 2)
@@ -105,6 +108,7 @@ class enlace(object):
                     received, nRx, overhead = self.getData()
                     if(received == self.tipo3):
                         print("Synching Done")
+                        self.rx.clearBuffer()
                         return True
                     elif time.time() > timeout:
                         print("Erro")

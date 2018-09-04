@@ -157,16 +157,14 @@ class RX(object):
                 eop_ok = string_eop + bytearray("OK","ascii")
 
                 package = self.buffer
-                self.buffer = b""
                 head = package[:start]
+                print("Head: ", head)
                 head_str = head.decode("utf-8")
                 
                 head_str = head_str[3:] #Definimos que os 5 últimos bytes representam o tamanho
                 #while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
                 #    head_str = head_str[1:]
                 time.sleep(0.05)
-
-                print (len(str(string_eop)))
 
                 Stuffing, index_list = self.check_oks(package, eop_ok)
                 if Stuffing == True:

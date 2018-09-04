@@ -91,13 +91,23 @@ def main():
 
             print("Tempo de envio: ", stop - start)
 
-            received, nRx, overhead = com.getData()
-            if (received == tipo5):
-                com.tx.threadKill()
-                break
-            elif (received == tipo6):
-                continue
-        
+            timeout = time.time() + 30 
+            while(True):
+                print("Esperando confirmação de envio")
+                received, nRx, overhead = com.getData()
+                if (received == tipo5):
+                    print("Done")
+                    com.tx.threadKill()
+                    break
+
+                elif (received == tipo6):
+                    print("Erro Tipo6")
+                    continue
+
+                elif time.time() > timeout:
+                    print("Erro")
+                    com.tx.threadKill()
+
         else:
             com.tx.threadKill()
             break
