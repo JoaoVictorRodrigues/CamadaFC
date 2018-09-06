@@ -64,7 +64,8 @@ def main():
 
     tipo5 = bytearray("5", "ascii")
     tipo6 = bytearray("6", "ascii")
-    while(True):
+    done = False
+    while(done == False):
         print(txLen)
         # Transmite dados
         print("tentado transmitir .... {} bytes".format(txLen))
@@ -98,6 +99,9 @@ def main():
                 if (received == tipo5):
                     print("Done")
                     com.tx.threadKill()
+                    package = com.tx.organize_package(txLen, img_file, 7) #4 é o tipo da mensagem
+                    com.sendData(package)
+                    done = True
                     break
 
                 elif (received == tipo6):

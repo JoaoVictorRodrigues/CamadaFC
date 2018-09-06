@@ -37,10 +37,12 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
-
-    while(True):
+    
+    done = False
+    while(done == False):
         tipo5 = bytearray("5", "ascii")
         tipo6 = bytearray("6", "ascii")
+        tipo7 = bytearray("7", "ascii")
         Synched = com.Synch_Server()
 
         if Synched == True:
@@ -75,12 +77,22 @@ def main():
                     txLen5 = len(tipo5)
                     package = com.tx.organize_package(txLen5, tipo5, 5)
                     com.sendData(package)
+                    time.sleep(1)
 
                     # Encerra comunicação
                     print("-------------------------")
                     print("Dados recebidos")
                     print("-------------------------")
-                    com.disable()
+                    
+                    timeout = time.time() + 15 
+                    while(True):
+                        print("Esperando confirmação de envio")
+                        received, nRx, overhead = com.getData()
+                        if (received == tipo7):
+                            print("Done")
+                            com.disable()
+                            done = True
+                            break
 
                 else:
                     print("Erro tipo 6")

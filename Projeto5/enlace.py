@@ -87,6 +87,7 @@ class enlace(object):
                 print("Synching2")
                 print("Synching Done")
                 self.rx.clearBuffer()
+                time.sleep(1)
                 return True
 
             elif time.time() > timeout:
