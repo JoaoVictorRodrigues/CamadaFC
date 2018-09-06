@@ -64,6 +64,8 @@ def main():
 
     tipo5 = bytearray("5", "ascii")
     tipo6 = bytearray("6", "ascii")
+    tipo7 = bytearray("7", "ascii")
+
     done = False
     while(done == False):
         print(txLen)
@@ -93,15 +95,16 @@ def main():
             print("Tempo de envio: ", stop - start)
 
             timeout = time.time() + 30 
-            while(True):
+            while(done == False):
                 print("Esperando confirmação de envio")
                 received, nRx, overhead = com.getData()
                 if (received == tipo5):
                     print("Done")
-                    com.tx.threadKill()
-                    package = com.tx.organize_package(txLen, img_file, 7) #4 é o tipo da mensagem
+                    txLen7 = len(tipo7)
+                    package = com.tx.organize_package(txLen7, tipo7, 7) 
                     com.sendData(package)
                     done = True
+                    com.tx.threadKill()
                     break
 
                 elif (received == tipo6):

@@ -49,7 +49,7 @@ def main():
             # Faz a recepção dos dados
             print ("Recebendo dados .... ")
             
-            while(True):
+            while(done == False):
                 rxBuffer, nRx, overhead = com.getData()
                 if com.rx.head_match == True:
                     print("Dados recebidos: ",len(rxBuffer))
@@ -90,8 +90,8 @@ def main():
                         received, nRx, overhead = com.getData()
                         if (received == tipo7):
                             print("Done")
-                            com.disable()
                             done = True
+                            com.disable()
                             break
 
                 else:
