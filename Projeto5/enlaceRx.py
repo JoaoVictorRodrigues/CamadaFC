@@ -177,7 +177,8 @@ class RX(object):
                     print("Stuffing True")
                     package = self.remove_oks(index_list, package, string_eop)
 
-                if (head_str + 9) == (len(package[x:]+6)): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
+                print(type(head_str))
+                if (head_str + 9) == (len(package[x:])+6): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
                     self.head_match = True
                     print ("Entrou")
                     try:
