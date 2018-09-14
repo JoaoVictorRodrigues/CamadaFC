@@ -55,10 +55,10 @@ class enlace(object):
     ################################
     # Application  interface       #
     ################################
-    def sendData(self, data):
+    def sendData(self, lista_pacotes):
         """ Send data over the enlace interface
         """
-        self.tx.sendBuffer(data)
+        self.tx.sendBuffer(lista_pacotes)
 
     def getData(self):
         """ Get n data over the enlace interface

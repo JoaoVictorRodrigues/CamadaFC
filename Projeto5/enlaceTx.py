@@ -61,7 +61,7 @@ class TX(object):
         """
         self.threadMutex = True
 
-    def sendBuffer(self, data):
+    def sendBuffer(self, lista_pacotes):
         """ Write a new data to the transmission buffer.
             This function is non blocked.
 
@@ -69,9 +69,11 @@ class TX(object):
         of transmission, this erase all content of the buffer
         in order to save the new value.
         """
-        self.transLen   = 0
-        self.buffer = data
-        self.threadMutex  = True
+
+        for sub_pacote in lista_pacotes:
+            self.transLen   = 0
+            self.buffer = sub_pacote
+            self.threadMutex  = True
 
     def getBufferLen(self):
         """ Return the total size of bytes in the TX buffer
@@ -117,17 +119,17 @@ class TX(object):
         return pacote
 
     def tam_padrao(self, txLen, msg_type, num_pacote, total_pacotes, erro_envio): #tam_padrao é uma string
-        num_pacote = bytearray(num_pacote)
-        total_pacotes = bytearray(total_pacotes)
-        msg_type = bytearray(msg_type)
+        num_pacote = num_pacote.to_bytes(1, "big")
+        total_pacotes = total_pacotes.to_bytes(1, "big")
+        msg_type = msg_type.to_bytes(1, "big")
         if erro_envio == True:
-            erro_envio = bytearray(1)
+            true = 1
+            erro_envio = true.to_bytes(1, "big")
         else:
-            erro_envio = bytearray(0)
+            false = 0
+            erro_envio = false.to_bytes(1, "big")
 
-        txLen = bytearray(txLen)
-        if txLen.decode(int) < 2:
-            txLen = bytearray(0) + txLen
+        txLen = txLen.to_bytes(2, "big")
 
         tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen 
         return tam_novo
@@ -156,11 +158,15 @@ class TX(object):
         return lista_pacotes, total_pacotes
 
     def organize_package(self, txLen, pacote, msg_type):
-        sub_pacotes, total_pacotes = sub_packages(txLen, pacote)
+        sub_pacotes, total_pacotes = self.sub_packages(txLen, pacote)
 
-        while(num_pacote <= total_pacotes):
-
-        head = self.tam_padrao(txLen, msg_type, num_pacote, total_pacotes, erro_envio)
-        EOP = bytearray("EOP", "ascii")
-        return head+dados+EOP
+        lista_pacotes = []
+        for sub_pacote in sub_pacotes:
+            num_pacote = sub_pacotes.index(sub_pacote) + 1
+            head = self.tam_padrao(len(sub_pacote), msg_type, num_pacote, total_pacotes, erro_envio)
+            EOP = bytearray("EOP", "ascii")
+            sub_pacote = head+sub_pacote+EOP
+            lista_pacotes.append(sub_pacote)
+    
+        return lista_pacotes
 
