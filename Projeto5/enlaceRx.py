@@ -126,7 +126,7 @@ class RX(object):
         for index in index_list:
             pacote2[index+len(eop_ok):index+len(eop_ok)] = string_eop
         return pacote2
-        
+
     def ignore_Stuffing(self, pacote, index_list, string_eop): #Essa função retorna um pacote sem o intervalo em que os Stuffings se encontram
         pacote2 = pacote
         while(1):
@@ -163,11 +163,11 @@ class RX(object):
                 package = self.buffer
                 head = package[:start]
                 print("Head: ", head)
-               
+
                 head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
                 head_str = int.from_bytes(head_str, "big")
-                num_pacote = int.from_bytes(head[0], "big")
-                total_pacotes = int.from_bytes(head[1], "big")
+                num_pacote = head[0]
+                total_pacotes = head[1]
                 print("PACOTE", num_pacote, "/", total_pacotes)
 
                 time.sleep(0.05)
@@ -178,7 +178,7 @@ class RX(object):
                     package = self.remove_oks(index_list, package, string_eop)
 
                 if (head_str + 9) == (len(package[x:]+6)): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
-                    self.head_match = True 
+                    self.head_match = True
                     print ("Entrou")
                     try:
                         if Stuffing == True:
