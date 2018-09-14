@@ -149,10 +149,13 @@ class RX(object):
 
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
+        len_head = 6
+        start = len_head
+        x = 6
+        PACOTAO = b""
         while(1):
-            if len(self.buffer) >= 8:
-                len_head = 6
-                start = len_head
+            if len(self.buffer) >= x:
+                start = x+6
                 string_eop = bytearray("EOP", "ascii")
                 eop_ok = string_eop + bytearray("OK","ascii")
 
@@ -162,6 +165,9 @@ class RX(object):
                
                 head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
                 head_str = int.from_bytes(head_str, "big")
+                num_pacote = int.from_bytes(head_str[0], "big")
+                total_pacotes = int.from_bytes(head_str[1], "big")
+                print("PACOTE", num_pacote, "/", total_pacotes)
                 time.sleep(0.05)
 
                 Stuffing, index_list = self.check_oks(package, eop_ok)
@@ -169,7 +175,7 @@ class RX(object):
                     print("Stuffing True")
                     package = self.remove_oks(index_list, package, string_eop)
 
-                if (int(head_str) + 9) == len(package): #ANTES ERA 11 POR QUE O HEAD ERA 8 
+                if (head_str + 9) == (len(package[x:]+6)): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
                     self.head_match = True 
                     print ("Entrou")
                     try:
@@ -187,17 +193,23 @@ class RX(object):
                         dados = package[start:stop]
 
                         print("EOP está em: ", stop)
-                        print("HEAD: ", head.decode("utf-8"))
+                        print("HEAD: ", head_str)
                         EOP = package[stop:]
                         print("EOP: ", EOP.decode("utf-8"))
 
-                        overhead = (len(dados)/len(package)) *100 #Cálculo do overhead
-                        break
+                        PACOTAO += dados
+                        x = stop+len(EOP)
+
+                        if (num_pacote == total_pacotes):
+                            overhead = (len(PACOTAO)/len(self.buffer)) *100 #Cálculo do overhead
+                            break
+                        else:
+                            continue
 
                     except Exception as e:
                         print(e)
 
-        return(dados, overhead)
+        return(PACOTAO, overhead)
 
     def clearBuffer(self):
         """ Clear the reception buffer
