@@ -118,7 +118,7 @@ class TX(object):
 
     def tam_padrao(self, txLen, msg_type, num_pacote, total_pacotes, erro_envio): #tam_padrao é uma string
         num_pacote = bytearray(num_pacote)
-        total_pacote = bytearray(total_pacotes)
+        total_pacotes = bytearray(total_pacotes)
         msg_type = bytearray(msg_type)
         if erro_envio == True:
             erro_envio = bytearray(1)
@@ -132,11 +132,13 @@ class TX(object):
         tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen 
         return tam_novo
 
-    def organize_package(self, txLen, pacote, msg_type):
+
+    def sub_packages(self, txLen, pacote):
         total_pacotes = txLen//128 
         if (txLen%128 != 0):
             total_pacotes+=1
 
+        #Variáveis definidas para dividir o pacote em fragmentos
         n0 = 0
         n = 128
         p=0
@@ -151,11 +153,12 @@ class TX(object):
             if lista_pacotes[i] == b"":
                 print(i)
                 del lista_pacotes[i]
+        return lista_pacotes, total_pacotes
 
+    def organize_package(self, txLen, pacote, msg_type):
+        sub_pacotes, total_pacotes = sub_packages(txLen, pacote)
 
-        pacote2 = b""
-        for pac in lista_pacotes:
-            pacote2 += pac
+        while(num_pacote <= total_pacotes):
 
         head = self.tam_padrao(txLen, msg_type, num_pacote, total_pacotes, erro_envio)
         EOP = bytearray("EOP", "ascii")

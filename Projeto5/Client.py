@@ -101,6 +101,9 @@ def main():
                 if (received == tipo5):
                     print("Done")
                     txLen7 = len(tipo7)
+
+                    
+
                     package = com.tx.organize_package(txLen7, tipo7, 7) 
                     com.sendData(package)
                     done = True
