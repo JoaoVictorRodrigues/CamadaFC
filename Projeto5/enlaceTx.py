@@ -118,7 +118,7 @@ class TX(object):
             pacote[index+len(EOP):index+len(EOP)] = ok
         return pacote
 
-    def tam_padrao(self, txLen, msg_type, num_pacote, total_pacotes, erro_envio): #tam_padrao é uma string
+    def tam_padrao(self, txLen, msg_type, num_pacote, total_pacotes, erro_envio = False): #tam_padrao é uma string
         num_pacote = num_pacote.to_bytes(1, "big")
         total_pacotes = total_pacotes.to_bytes(1, "big")
         msg_type = msg_type.to_bytes(1, "big")
@@ -157,13 +157,13 @@ class TX(object):
                 del lista_pacotes[i]
         return lista_pacotes, total_pacotes
 
-    def organize_package(self, txLen, pacote, msg_type):
+    def organize_package(self, txLen, pacote, msg_type, erro_envio = False):
         sub_pacotes, total_pacotes = self.sub_packages(txLen, pacote)
 
         lista_pacotes = []
         for sub_pacote in sub_pacotes:
             num_pacote = sub_pacotes.index(sub_pacote) + 1
-            head = self.tam_padrao(len(sub_pacote), msg_type, num_pacote, total_pacotes, erro_envio)
+            head = self.tam_padrao(len(sub_pacote), msg_type, num_pacote, total_pacotes)
             EOP = bytearray("EOP", "ascii")
             sub_pacote = head+sub_pacote+EOP
             lista_pacotes.append(sub_pacote)

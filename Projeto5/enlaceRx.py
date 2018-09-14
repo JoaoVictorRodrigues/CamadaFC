@@ -151,7 +151,7 @@ class RX(object):
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
         while(1):
             if len(self.buffer) >= 8:
-                len_head = 8
+                len_head = 6
                 start = len_head
                 string_eop = bytearray("EOP", "ascii")
                 eop_ok = string_eop + bytearray("OK","ascii")
@@ -159,11 +159,9 @@ class RX(object):
                 package = self.buffer
                 head = package[:start]
                 print("Head: ", head)
-                head_str = head.decode("utf-8")
-                
-                head_str = head_str[3:] #Definimos que os 5 últimos bytes representam o tamanho
-                #while head_str[0] == "0": #Remove os zeros do head pra achar o tamanho dos dados
-                #    head_str = head_str[1:]
+               
+                head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
+                head_str = int.from_bytes(head_str, "big")
                 time.sleep(0.05)
 
                 Stuffing, index_list = self.check_oks(package, eop_ok)
@@ -171,7 +169,7 @@ class RX(object):
                     print("Stuffing True")
                     package = self.remove_oks(index_list, package, string_eop)
 
-                if (int(head_str) + 11) == len(package):
+                if (int(head_str) + 9) == len(package): #ANTES ERA 11 POR QUE O HEAD ERA 8 
                     self.head_match = True 
                     print ("Entrou")
                     try:

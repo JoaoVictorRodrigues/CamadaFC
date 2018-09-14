@@ -99,7 +99,7 @@ def main():
                 else:
                     print("Erro tipo 6")
                     txLen6 = len(tipo6)
-                    package = com.tx.organize_package(txLen6, tipo6, 6)
+                    package = com.tx.organize_package(txLen6, tipo6, 6, True)
                     com.sendData(package)
 
 
