@@ -153,6 +153,7 @@ class RX(object):
         start = len_head
         x = 6
         PACOTAO = b""
+        contagem = 0 #Variável criada pra contar os pacotes e comparar com o valor que está no head
         while(1):
             if len(self.buffer) >= x:
                 start = x+6
@@ -168,6 +169,7 @@ class RX(object):
                 num_pacote = int.from_bytes(head_str[0], "big")
                 total_pacotes = int.from_bytes(head_str[1], "big")
                 print("PACOTE", num_pacote, "/", total_pacotes)
+
                 time.sleep(0.05)
 
                 Stuffing, index_list = self.check_oks(package, eop_ok)
@@ -199,6 +201,10 @@ class RX(object):
 
                         PACOTAO += dados
                         x = stop+len(EOP)
+                        contagem += 1
+
+                        if contagem != num_pacote:
+                            print("Pacote diferente do esperado foi recebido")
 
                         if (num_pacote == total_pacotes):
                             overhead = (len(PACOTAO)/len(self.buffer)) *100 #Cálculo do overhead
