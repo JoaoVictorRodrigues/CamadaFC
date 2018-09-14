@@ -133,9 +133,29 @@ class TX(object):
         return tam_novo
 
     def organize_package(self, txLen, pacote, msg_type):
-        total_pacotes = txLen//128 + 1
+        total_pacotes = txLen//128 
+        if (txLen%128 != 0):
+            total_pacotes+=1
 
-        
+        n0 = 0
+        n = 128
+        p=0
+        lista_pacotes = []
+        while(p <= total_pacotes-1):
+            lista_pacotes.append(pacote[n0:n])
+            n0+=128
+            n+=128
+            p+=1
+        lista_pacotes.append(pacote[n:]) 
+        for i in range(len(lista_pacotes)):
+            if lista_pacotes[i] == b"":
+                print(i)
+                del lista_pacotes[i]
+
+
+        pacote2 = b""
+        for pac in lista_pacotes:
+            pacote2 += pac
 
         head = self.tam_padrao(txLen, msg_type, num_pacote, total_pacotes, erro_envio)
         EOP = bytearray("EOP", "ascii")
