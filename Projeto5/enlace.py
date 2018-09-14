@@ -105,9 +105,6 @@ class enlace(object):
                 package = self.tx.organize_package(txLen2, self.tipo2, 2)
                 self.sendData(package)
                 print("Synching2")
-            elif (time.time() > timeout):
-                print("Timeout")
-                break
 
                 while(True):
                     timeout = time.time() + 5
@@ -116,7 +113,12 @@ class enlace(object):
                         print("Synching Done")
                         self.rx.clearBuffer()
                         return True
+                        
                     elif time.time() > timeout:
                         print("Timeout")
                         break
+
+            elif (time.time() > timeout):
+                print("Timeout")
+                break
         return False
