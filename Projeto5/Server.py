@@ -43,6 +43,7 @@ def main():
         tipo5 = bytearray("5", "ascii")
         tipo6 = bytearray("6", "ascii")
         tipo7 = bytearray("7", "ascii")
+        tipo8 = bytearray("8", "ascii")
         Synched = com.Synch_Server()
 
         if Synched == True:
@@ -69,15 +70,6 @@ def main():
 
                     # log
                     print ("Lido              {} bytes ".format(nRx))
-                    nome2=input("Como você gostaria de nomear o arquivo? : ")
-                    nf = open(nome2, "wb")
-                    nf.write(rxBuffer)
-                    nf.close()
-                    
-                    txLen5 = len(tipo5)
-                    package = com.tx.organize_package(txLen5, tipo5, 5)
-                    com.sendData(package)
-                    time.sleep(1)
 
                     # Encerra comunicação
                     print("-------------------------")
@@ -89,6 +81,16 @@ def main():
                         print("Esperando confirmação de envio")
                         received, nRx, overhead = com.getData()
                         if (received == tipo7):
+                            nome2=input("Como você gostaria de nomear o arquivo? : ")
+                            nf = open(nome2, "wb")
+                            nf.write(rxBuffer)
+                            nf.close()
+                            
+                            txLen5 = len(tipo5)
+                            package = com.tx.organize_package(txLen5, tipo5, 5)
+                            com.sendData(package)
+                            time.sleep(1)
+
                             print("Done")
                             done = True
                             com.disable()
