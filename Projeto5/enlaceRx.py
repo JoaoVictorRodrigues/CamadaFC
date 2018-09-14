@@ -166,8 +166,8 @@ class RX(object):
                
                 head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
                 head_str = int.from_bytes(head_str, "big")
-                num_pacote = int.from_bytes(head_str[0], "big")
-                total_pacotes = int.from_bytes(head_str[1], "big")
+                num_pacote = int.from_bytes(head[0], "big")
+                total_pacotes = int.from_bytes(head[1], "big")
                 print("PACOTE", num_pacote, "/", total_pacotes)
 
                 time.sleep(0.05)
