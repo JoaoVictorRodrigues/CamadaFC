@@ -209,7 +209,7 @@ class RX(object):
                             print("Pacote diferente do esperado foi recebido")
 
                         if (num_pacote == total_pacotes):
-                            overhead = (len(PACOTAO)/len(self.buffer)) *100 #Cálculo do overhead
+                            overhead = (len(PACOTAO)/len(PACOTAO)+(9*84)) *100 #Cálculo do overhead
                             break
                         else:
                             continue
