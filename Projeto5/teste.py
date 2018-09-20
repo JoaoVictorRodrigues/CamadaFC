@@ -39,5 +39,8 @@ for i in lista_pacotes:
 
 #print(total_pacotes)
 #print(len(lista_pacotes))
-num=1
-print(num.to_bytes(2, "big"))
+head = 6
+print(len(img_file)+head)
+print(len(img_file))
+print(type(img_file))
+print(b"x00\x01" + b"EOP" +bytearray("EOP", "ascii"))

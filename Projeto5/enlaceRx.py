@@ -149,8 +149,6 @@ class RX(object):
 
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
-        len_head = 6
-        start = len_head
         x = 6
         PACOTAO = b""
         contagem = 0 #Variável criada pra contar os pacotes e comparar com o valor que está no head

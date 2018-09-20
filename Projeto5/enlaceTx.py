@@ -164,6 +164,7 @@ class TX(object):
         for sub_pacote in sub_pacotes:
             num_pacote = sub_pacotes.index(sub_pacote) + 1
             head = self.tam_padrao(len(sub_pacote), msg_type, num_pacote, total_pacotes)
+            print("Head do pacote:", head)
             EOP = bytearray("EOP", "ascii")
             sub_pacote = head+sub_pacote+EOP
             lista_pacotes.append(sub_pacote)
