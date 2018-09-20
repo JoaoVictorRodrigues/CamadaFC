@@ -24,7 +24,7 @@ import binascii
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM4"                  # Windows(variacao de)
+serialName = "COM7"                  # Windows(variacao de)
 
 print("porta COM aberta com sucesso")
 
@@ -37,7 +37,7 @@ def main():
 
     #verificar que a comunicação foi aberta
     print("comunicação aberta")
-    
+
     done = False
     while(done == False):
         tipo5 = bytearray("5", "ascii")
@@ -49,7 +49,7 @@ def main():
         if Synched == True:
             # Faz a recepção dos dados
             print ("Recebendo dados .... ")
-            
+
             while(done == False):
                 rxBuffer, nRx, overhead = com.getData()
                 if com.rx.head_match == True:
@@ -75,8 +75,8 @@ def main():
                     print("-------------------------")
                     print("Dados recebidos")
                     print("-------------------------")
-                    
-                    timeout = time.time() + 15 
+
+                    timeout = time.time() + 15
                     while(True):
                         print("Esperando confirmação de envio")
                         received, nRx, overhead = com.getData()
@@ -85,7 +85,7 @@ def main():
                             nf = open(nome2, "wb")
                             nf.write(rxBuffer)
                             nf.close()
-                            
+
                             txLen5 = len(tipo5)
                             package = com.tx.organize_package(txLen5, tipo5, 5)
                             com.sendData(package)
