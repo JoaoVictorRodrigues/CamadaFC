@@ -74,6 +74,7 @@ class TX(object):
             self.transLen   = 0
             self.buffer = sub_pacote
             self.threadMutex  = True
+            time.sleep(0.5)
 
     def getBufferLen(self):
         """ Return the total size of bytes in the TX buffer
@@ -85,7 +86,7 @@ class TX(object):
         """
         #print("O tamanho transmitido. Impressao fora do thread {}" .format(self.transLen))
         return(self.transLen)
-        
+
 
     def getIsBussy(self):
         """ Return true if a transmission is ongoing
@@ -104,7 +105,7 @@ class TX(object):
                         index_list.append(index)
                         pacote2 = pacote[index+len(EOP):]
                         print("EOPs repetidos encontrados: ", index_list)
-                        if pacote2.index(EOP) < len(pacote) - 16:
+                        if pacote2.index(EOP) < len(pacote) - 12:
                             continue
                     except Exception as e:
                         return True, index_list
@@ -113,7 +114,7 @@ class TX(object):
 
 
     def byte_stuffing(self, index_list, pacote, EOP):
-        ok = bytearray("OK", "ascii") 
+        ok = bytearray("OK", "ascii")
         for index in index_list:
             pacote[index+len(EOP):index+len(EOP)] = ok
         return pacote
@@ -131,12 +132,12 @@ class TX(object):
 
         txLen = txLen.to_bytes(2, "big")
 
-        tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen 
+        tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen
         return tam_novo
 
 
     def sub_packages(self, txLen, pacote):
-        total_pacotes = txLen//128 
+        total_pacotes = txLen//128
         if (txLen%128 != 0):
             total_pacotes+=1
 
@@ -150,10 +151,9 @@ class TX(object):
             n0+=128
             n+=128
             p+=1
-        lista_pacotes.append(pacote[n:]) 
+        lista_pacotes.append(pacote[n:])
         for i in range(len(lista_pacotes)):
             if lista_pacotes[i] == b"":
-                print(i)
                 del lista_pacotes[i]
         return lista_pacotes, total_pacotes
 
@@ -168,6 +168,5 @@ class TX(object):
             EOP = bytearray("EOP", "ascii")
             sub_pacote = head+sub_pacote+EOP
             lista_pacotes.append(sub_pacote)
-    
-        return lista_pacotes
 
+        return lista_pacotes

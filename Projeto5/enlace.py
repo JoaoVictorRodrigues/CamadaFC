@@ -68,7 +68,7 @@ class enlace(object):
         data, overhead = self.rx.getNData()
 
         self.rx.clearBuffer()
-        
+
         return(data, len(data), overhead)
 
     def Synch_Client(self):
@@ -77,8 +77,9 @@ class enlace(object):
         txLen1 = len(self.tipo1)
         package = self.tx.organize_package(txLen1, self.tipo1, 1)
         self.sendData(package)
+        
         while(True):
-            timeout = time.time() + 5 
+            timeout = time.time() + 5
             received , nRx, overhead = self.getData()
             if received == self.tipo2:
                 txLen3 = len(self.tipo3)
@@ -93,7 +94,7 @@ class enlace(object):
             elif time.time() > timeout:
                 print("Timeout")
         return False
-    
+
     def Synch_Server(self):
         timeout = time.time() + 5
         #Etapa 1
@@ -101,6 +102,7 @@ class enlace(object):
         txLen2 = len(self.tipo2)
         while(True):
             received, nRx, overhead = self.getData()
+
             if (received == self.tipo1):
                 package = self.tx.organize_package(txLen2, self.tipo2, 2)
                 self.sendData(package)
@@ -113,7 +115,7 @@ class enlace(object):
                         print("Synching Done")
                         self.rx.clearBuffer()
                         return True
-                        
+
                     elif time.time() > timeout:
                         print("Timeout")
                         break

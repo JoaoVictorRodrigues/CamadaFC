@@ -153,13 +153,14 @@ class RX(object):
         PACOTAO = b""
         contagem = 0 #Variável criada pra contar os pacotes e comparar com o valor que está no head
         while(1):
-            if len(self.buffer) >= x:
-                start = x+6
+            if len(self.buffer) >= 6:
+                print (len(self.buffer))
+                start = x
                 string_eop = bytearray("EOP", "ascii")
                 eop_ok = string_eop + bytearray("OK","ascii")
 
                 package = self.buffer
-                head = package[:start]
+                head = package[start-6 :start]
                 print("Head: ", head)
 
                 head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
@@ -199,8 +200,10 @@ class RX(object):
                         print("EOP: ", EOP.decode("utf-8"))
 
                         PACOTAO += dados
-                        x = stop+len(EOP)
+                        #x = stop+len(EOP) + 6
+                        self.clearBuffer()
                         contagem += 1
+                        print("Contagem: ", contagem)
 
                         if contagem != num_pacote:
                             print("Pacote diferente do esperado foi recebido")
