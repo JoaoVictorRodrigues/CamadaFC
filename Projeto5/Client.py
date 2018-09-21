@@ -99,7 +99,7 @@ def main():
                 print("Esperando confirmação de envio")
                 received, nRx, overhead = com.getData()
                 if (received == tipo5):
-                    print("Done")
+                    print("Mensagem do tipo 5 recebida")
                     txLen7 = len(tipo7)
 
                     

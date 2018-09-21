@@ -58,8 +58,9 @@ class enlace(object):
     def sendData(self, lista_pacotes):
         """ Send data over the enlace interface
         """
-        for sub_pacote in lista_pacotes:
-            self.tx.sendBuffer(sub_pacote)
+        for i in range(len(lista_pacotes)):
+            self.tx.sendBuffer(lista_pacotes[i])
+            print("Pacote: ", i+1, "de", len(lista_pacotes)+1)
             time.sleep(1)
 
     def getData(self):
