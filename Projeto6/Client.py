@@ -27,7 +27,7 @@ import timeit
 
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM5"                  # Windows(variacao de)
+serialName = "COM6"                  # Windows(variacao de)
 
 
 
@@ -69,7 +69,6 @@ def main():
         tipo7 = bytearray("7", "ascii")
         pacote_esperado = True
 
-
         while(done == False) and (pacote_esperado == True):
             print(txLen)
             # Transmite dados
@@ -97,7 +96,7 @@ def main():
 
                 print("Tempo de envio: ", stop - start)
 
-                timeout = time.time() + 30
+                timeout = time.time() + 30 
                 while(done == False):
                     print("Esperando confirmação de envio")
                     received, nRx, overhead,pacote_esperado = com.getData()
@@ -105,9 +104,9 @@ def main():
                         print("Mensagem do tipo 5 recebida")
                         txLen7 = len(tipo7)
 
+                        
 
-
-                        package = com.tx.organize_package(txLen7, tipo7, 7)
+                        package = com.tx.organize_package(txLen7, tipo7, 7) 
                         com.sendData(package)
                         done = True
                         com.tx.threadKill()
