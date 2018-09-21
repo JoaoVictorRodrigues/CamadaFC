@@ -69,11 +69,9 @@ class TX(object):
         of transmission, this erase all content of the buffer
         in order to save the new value.
         """
-
-        for sub_pacote in lista_pacotes:
-            self.transLen   = 0
-            self.buffer = sub_pacote
-            self.threadMutex  = True
+        self.transLen   = 0
+        self.buffer = sub_pacote
+        self.threadMutex  = True
 
     def getBufferLen(self):
         """ Return the total size of bytes in the TX buffer
