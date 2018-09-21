@@ -167,7 +167,7 @@ class RX(object):
                 head = package[start-10 :start]
                 print("Head: ", head)
 
-                crc_head = head[6:]
+                crc_head = int.from_bytes(head[6:], "big")
 
                 head_str = head[5:6] #Definimos que os 2 últimos bytes representam o tamanho (desconsiderando o crc)
                 head_str = int.from_bytes(head_str, "big")
