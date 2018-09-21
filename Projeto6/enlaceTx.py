@@ -131,7 +131,7 @@ class TX(object):
 
         txLen = txLen.to_bytes(2, "big")
 
-        crc = crc.to_bytes(2, "big")
+        crc = bytearray(crc, "ascii")
 
         tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen+crc
         return tam_novo
@@ -163,7 +163,7 @@ class TX(object):
         #Calculo do CRC
         crc16 = crcmod.predefined.Crc('crc-16-mcrf4xx')
         crc16.update(pacote)
-        crc = int(crc16.hexdigest())
+        crc = crc16.hexdigest()
         
         sub_pacotes, total_pacotes = self.sub_packages(txLen, pacote)
 
