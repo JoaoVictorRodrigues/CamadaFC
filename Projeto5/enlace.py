@@ -60,6 +60,7 @@ class enlace(object):
         """
         for sub_pacote in lista_pacotes:
             self.tx.sendBuffer(sub_pacote)
+            time.sleep(1)
 
     def getData(self):
         """ Get n data over the enlace interface

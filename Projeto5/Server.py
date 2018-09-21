@@ -75,6 +75,11 @@ def main():
                     print("-------------------------")
                     print("Dados recebidos")
                     print("-------------------------")
+                    
+                    txLen5 = len(tipo5)
+                    package = com.tx.organize_package(txLen5, tipo5, 5)
+                    com.sendData(package)
+                    time.sleep(1)
 
                     timeout = time.time() + 15
                     while(True):
@@ -85,11 +90,6 @@ def main():
                             nf = open(nome2, "wb")
                             nf.write(rxBuffer)
                             nf.close()
-
-                            txLen5 = len(tipo5)
-                            package = com.tx.organize_package(txLen5, tipo5, 5)
-                            com.sendData(package)
-                            time.sleep(1)
 
                             print("Done")
                             done = True

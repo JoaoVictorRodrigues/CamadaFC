@@ -61,7 +61,7 @@ class TX(object):
         """
         self.threadMutex = True
 
-    def sendBuffer(self, lista_pacotes):
+    def sendBuffer(self, sub_pacote):
         """ Write a new data to the transmission buffer.
             This function is non blocked.
 
