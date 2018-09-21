@@ -8,5 +8,7 @@ message = STX + data + ETX
 
 crc16 = crcmod.predefined.Crc('crc-16-mcrf4xx')
 crc16.update(message)
-crc = crc16.hexdigest()
+crc = int(crc16.hexdigest())
+
+crc = crc.to_bytes(2, "big")
 print (crc)
