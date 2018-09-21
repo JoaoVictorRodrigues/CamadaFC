@@ -157,11 +157,6 @@ class TX(object):
         return lista_pacotes, total_pacotes
 
     def organize_package(self, txLen, pacote, msg_type, erro_envio = False):
-
-        #Calculo do CRC
-        crc16 = crcmod.predefined.Crc('crc-16-mcrf4xx')
-        crc16.update(pacote)
-        crc = crc16.hexdigest()
         
         sub_pacotes, total_pacotes = self.sub_packages(txLen, pacote)
 
