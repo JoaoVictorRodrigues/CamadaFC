@@ -153,11 +153,11 @@ class RX(object):
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
         overhead = 0
-        x = 10
+        x = 7
         PACOTAO = b""
         contagem = 0 #Variável criada pra contar os pacotes e comparar com o valor que está no head
         while(1):
-            if len(self.buffer) >= 10:
+            if len(self.buffer) >= 7:
                 print (len(self.buffer))
                 start = x
                 string_eop = bytearray("EOP", "ascii")
@@ -183,7 +183,7 @@ class RX(object):
                     package = self.remove_oks(index_list, package, string_eop)
 
                 print(type(head_str))
-                if (head_str + 13) == (len(package[x:])+10): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
+                if (head_str + 10) == (len(package[x:])+7): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
                     self.head_match = True
                     print ("Entrou")
                     try:

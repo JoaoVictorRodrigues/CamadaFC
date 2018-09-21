@@ -131,7 +131,7 @@ class TX(object):
 
         txLen = txLen.to_bytes(2, "big")
 
-        crc = crc.to_bytes(3, "big")
+        crc = crc.to_bytes(1, "big")
 
         tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen+crc
         return tam_novo
