@@ -188,9 +188,7 @@ class RX(object):
                                 stop = package.index(string_eop)
                         else:
                             stop = package.index(string_eop)
-                            print("stop1")
                             print(stop)
-                            print("stop2")
 
                         dados = package[start:stop]
 
@@ -204,6 +202,7 @@ class RX(object):
                         self.clearBuffer()
                         contagem += 1
                         print("Contagem: ", contagem)
+                        print("//////////////////////////")
 
                         if contagem != num_pacote:
                             print("Pacote diferente do esperado foi recebido")
