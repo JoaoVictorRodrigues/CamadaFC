@@ -9,6 +9,8 @@
 
 # Importa pacote de tempo
 import time
+import crcmod
+import crcmod.predefined
 
 # Threads
 import threading
@@ -116,7 +118,7 @@ class TX(object):
             pacote[index+len(EOP):index+len(EOP)] = ok
         return pacote
 
-    def tam_padrao(self, txLen, msg_type, num_pacote, total_pacotes, erro_envio = False): #tam_padrao é uma string
+    def tam_padrao(self, crc, txLen, msg_type, num_pacote, total_pacotes, erro_envio = False): #tam_padrao é uma string
         num_pacote = num_pacote.to_bytes(1, "big")
         total_pacotes = total_pacotes.to_bytes(1, "big")
         msg_type = msg_type.to_bytes(1, "big")
@@ -129,7 +131,7 @@ class TX(object):
 
         txLen = txLen.to_bytes(2, "big")
 
-        tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen
+        tam_novo = num_pacote+total_pacotes+msg_type+erro_envio+txLen+crc
         return tam_novo
 
 
@@ -155,12 +157,18 @@ class TX(object):
         return lista_pacotes, total_pacotes
 
     def organize_package(self, txLen, pacote, msg_type, erro_envio = False):
+
+        #Calculo do CRC
+        crc16 = crcmod.predefined.Crc('crc-16-mcrf4xx')
+        crc16.update(pacote)
+        crc = crc16.hexdigest()
+        
         sub_pacotes, total_pacotes = self.sub_packages(txLen, pacote)
 
         lista_pacotes = []
         for sub_pacote in sub_pacotes:
             num_pacote = sub_pacotes.index(sub_pacote) + 1
-            head = self.tam_padrao(len(sub_pacote), msg_type, num_pacote, total_pacotes)
+            head = self.tam_padrao(crc, len(sub_pacote), msg_type, num_pacote, total_pacotes, crc)
             print("Head do pacote:", head)
             EOP = bytearray("EOP", "ascii")
             sub_pacote = head+sub_pacote+EOP

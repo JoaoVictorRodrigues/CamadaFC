@@ -41,7 +41,8 @@ def main():
     com.enable()
 
     #verificar que a comunicação foi aberta
-    while(True):
+    done = False
+    while(done == False):
         print("comunicação aberta")
         arquivo=input("Digite o nome do arquivo que deseja enviar: ")
 
@@ -68,7 +69,6 @@ def main():
         tipo7 = bytearray("7", "ascii")
         pacote_esperado = True
 
-        done = False
         while(done == False) and (pacote_esperado == True):
             print(txLen)
             # Transmite dados

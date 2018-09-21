@@ -53,8 +53,6 @@ def main():
 
             while(done == False) and (pacote_esperado == True):
                 rxBuffer, nRx, overhead, pacote_esperado = com.getData()
-                if pacote_esperado == False:
-                    #Reenviar pacote
                 if com.rx.head_match == True:
                     print("Dados recebidos: ",len(rxBuffer))
                     print("Overhead: ", overhead)

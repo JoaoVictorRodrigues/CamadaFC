@@ -9,6 +9,8 @@
 
 # Importa pacote de tempo
 import time
+import crcmod
+import crcmod.predefined
 
 # Threads
 import threading
@@ -150,21 +152,24 @@ class RX(object):
 
         #if self.getBufferLen() < size:
         #    print("ERROS!!! TERIA DE LER %s E LEU APENAS %s", (size,temPraLer))
-        x = 6
+        overhead = 0
+        x = 10
         PACOTAO = b""
         contagem = 0 #Variável criada pra contar os pacotes e comparar com o valor que está no head
         while(1):
-            if len(self.buffer) >= 6:
+            if len(self.buffer) >= 10:
                 print (len(self.buffer))
                 start = x
                 string_eop = bytearray("EOP", "ascii")
                 eop_ok = string_eop + bytearray("OK","ascii")
 
                 package = self.buffer
-                head = package[start-6 :start]
+                head = package[start-10 :start]
                 print("Head: ", head)
 
-                head_str = head[5:] #Definimos que os 2 últimos bytes representam o tamanho
+                crc_head = head[6:]
+
+                head_str = head[5:6] #Definimos que os 2 últimos bytes representam o tamanho (desconsiderando o crc)
                 head_str = int.from_bytes(head_str, "big")
                 num_pacote = head[0]
                 total_pacotes = head[1]
@@ -178,7 +183,7 @@ class RX(object):
                     package = self.remove_oks(index_list, package, string_eop)
 
                 print(type(head_str))
-                if (head_str + 9) == (len(package[x:])+6): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
+                if (head_str + 13) == (len(package[x:])+10): #ANTES ERA 11 POR QUE O HEAD ERA 8, agora é preciso ignorar o começo do buffer pq ele corresponde a outro pacote
                     self.head_match = True
                     print ("Entrou")
                     try:
@@ -193,13 +198,18 @@ class RX(object):
 
                         dados = package[start:stop]
 
+                        crc16 = crcmod.predefined.Crc('crc-16-mcrf4xx')
+                        crc16.update(dados)
+                        crc = crc16.hexdigest()
+
+                        print("CRC Head: ", crc_head, "CRC Real: ", crc)
+
                         print("EOP está em: ", stop)
                         print("HEAD: ", head_str)
                         EOP = package[stop:]
                         print("EOP: ", EOP.decode("utf-8"))
 
                         PACOTAO += dados
-                        #x = stop+len(EOP) + 6
                         self.clearBuffer()
                         contagem += 1
                         print("Contagem: ", contagem)
@@ -211,7 +221,7 @@ class RX(object):
                             break
 
                         if (num_pacote == total_pacotes):
-                            overhead = (len(PACOTAO)/len(PACOTAO)+(9*84)) *100 #Cálculo do overhead
+                            overhead = (len(PACOTAO)/len(PACOTAO)+(13*84)) *100 #Cálculo do overhead
                             break
                         else:
                             continue
