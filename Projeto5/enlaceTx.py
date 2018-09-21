@@ -74,7 +74,6 @@ class TX(object):
             self.transLen   = 0
             self.buffer = sub_pacote
             self.threadMutex  = True
-            time.sleep(0.5)
 
     def getBufferLen(self):
         """ Return the total size of bytes in the TX buffer
