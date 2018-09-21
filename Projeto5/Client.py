@@ -41,86 +41,88 @@ def main():
     com.enable()
 
     #verificar que a comunicação foi aberta
-    print("comunicação aberta")
-    arquivo=input("Digite o nome do arquivo que deseja enviar: ")
+    while(True):
+        print("comunicação aberta")
+        arquivo=input("Digite o nome do arquivo que deseja enviar: ")
 
-    # a seguir ha um exemplo de dados sendo carregado para transmissao
-    # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
-    #como fazer isso
+        # a seguir ha um exemplo de dados sendo carregado para transmissao
+        # voce pode criar o seu carregando os dados de uma imagem. Tente descobrir
+        #como fazer isso
 
-    #Caso algum dia decidirmos mudar o baudrate, lembrar de mudar essa variavel tambem:)
-    baldes=115200
-    bitrate=baldes*10
-    tamanho=os.stat(arquivo).st_size
-    tempo=tamanho/bitrate
-    print("O tempo esperado de envio do arquivo é: " + str(tempo))
+        #Caso algum dia decidirmos mudar o baudrate, lembrar de mudar essa variavel tambem:)
+        baldes=115200
+        bitrate=baldes*10
+        tamanho=os.stat(arquivo).st_size
+        tempo=tamanho/bitrate
+        print("O tempo esperado de envio do arquivo é: " + str(tempo))
 
-    print ("gerando dados para transmissao :")
+        print ("gerando dados para transmissao :")
 
-    b = open(arquivo, "rb")
-    img_file = b.read()
-    txBuffer = img_file
-    txLen    = len(txBuffer)
+        b = open(arquivo, "rb")
+        img_file = b.read()
+        txBuffer = img_file
+        txLen    = len(txBuffer)
 
-    tipo5 = bytearray("5", "ascii")
-    tipo6 = bytearray("6", "ascii")
-    tipo7 = bytearray("7", "ascii")
+        tipo5 = bytearray("5", "ascii")
+        tipo6 = bytearray("6", "ascii")
+        tipo7 = bytearray("7", "ascii")
+        pacote_esperado = True
 
-    done = False
-    while(done == False):
-        print(txLen)
-        # Transmite dados
-        print("tentado transmitir .... {} bytes".format(txLen))
+        done = False
+        while(done == False) and (pacote_esperado == True):
+            print(txLen)
+            # Transmite dados
+            print("tentado transmitir .... {} bytes".format(txLen))
 
-        start=timeit.default_timer()
+            start=timeit.default_timer()
 
-        Synched = com.Synch_Client()
+            Synched = com.Synch_Client()
 
-        timeout = time.time() + 5
-        if Synched == True:
-            package = com.tx.organize_package(txLen, img_file, 4) #4 é o tipo da mensagem
-            com.sendData(package)
+            timeout = time.time() + 5
+            if Synched == True:
+                package = com.tx.organize_package(txLen, img_file, 4) #4 é o tipo da mensagem
+                com.sendData(package)
 
-            stop=timeit.default_timer()
+                stop=timeit.default_timer()
 
 
-            # Atualiza dados da transmissão
-            txSize = com.tx.getStatus()
+                # Atualiza dados da transmissão
+                txSize = com.tx.getStatus()
 
-            # Encerra comunicação
-            print("-------------------------")
-            print("Dados enviados")
-            print("-------------------------")
+                # Encerra comunicação
+                print("-------------------------")
+                print("Dados enviados")
+                print("-------------------------")
 
-            print("Tempo de envio: ", stop - start)
+                print("Tempo de envio: ", stop - start)
 
-            timeout = time.time() + 30 
-            while(done == False):
-                print("Esperando confirmação de envio")
-                received, nRx, overhead = com.getData()
-                if (received == tipo5):
-                    print("Mensagem do tipo 5 recebida")
-                    txLen7 = len(tipo7)
+                timeout = time.time() + 30 
+                while(done == False):
+                    print("Esperando confirmação de envio")
+                    received, nRx, overhead,pacote_esperado = com.getData()
+                    if (received == tipo5):
+                        print("Mensagem do tipo 5 recebida")
+                        txLen7 = len(tipo7)
 
-                    
+                        
 
-                    package = com.tx.organize_package(txLen7, tipo7, 7) 
-                    com.sendData(package)
-                    done = True
-                    com.tx.threadKill()
-                    break
+                        package = com.tx.organize_package(txLen7, tipo7, 7) 
+                        com.sendData(package)
+                        done = True
+                        com.tx.threadKill()
+                        break
 
-                elif (received == tipo6):
-                    print("Erro Tipo6")
-                    continue
+                    elif (received == tipo6):
+                        print("Erro Tipo6")
+                        continue
 
-                elif time.time() > timeout:
-                    print("Erro")
-                    com.tx.threadKill()
+                    elif time.time() > timeout:
+                        print("Erro")
+                        com.tx.threadKill()
 
-        else:
-            com.tx.threadKill()
-            break
+            else:
+                com.tx.threadKill()
+                break
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":

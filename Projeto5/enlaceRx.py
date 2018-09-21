@@ -28,6 +28,7 @@ class RX(object):
         self.threadMutex = True
         self.READLEN     = 1024
         self.head_match = False
+        self.pacote_esperado = True
 
     def thread(self):
         """ RX thread, to send data in parallel with the code
@@ -206,6 +207,8 @@ class RX(object):
 
                         if contagem != num_pacote:
                             print("Pacote diferente do esperado foi recebido")
+                            self.pacote_esperado = False
+                            break
 
                         if (num_pacote == total_pacotes):
                             overhead = (len(PACOTAO)/len(PACOTAO)+(9*84)) *100 #Cálculo do overhead
@@ -216,7 +219,7 @@ class RX(object):
                     except Exception as e:
                         print(e)
 
-        return(PACOTAO, overhead)
+        return(PACOTAO, overhead, self.pacote_esperado)
 
     def clearBuffer(self):
         """ Clear the reception buffer

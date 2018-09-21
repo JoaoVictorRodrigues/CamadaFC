@@ -44,14 +44,17 @@ def main():
         tipo6 = bytearray("6", "ascii")
         tipo7 = bytearray("7", "ascii")
         tipo8 = bytearray("8", "ascii")
+        pacote_esperado = True
         Synched = com.Synch_Server()
 
         if Synched == True:
             # Faz a recepção dos dados
             print ("Recebendo dados .... ")
 
-            while(done == False):
-                rxBuffer, nRx, overhead = com.getData()
+            while(done == False) and (pacote_esperado == True):
+                rxBuffer, nRx, overhead, pacote_esperado = com.getData()
+                if pacote_esperado == False:
+                    #Reenviar pacote
                 if com.rx.head_match == True:
                     print("Dados recebidos: ",len(rxBuffer))
                     print("Overhead: ", overhead)
@@ -75,7 +78,7 @@ def main():
                     print("-------------------------")
                     print("Dados recebidos")
                     print("-------------------------")
-                    
+
                     txLen5 = len(tipo5)
                     package = com.tx.organize_package(txLen5, tipo5, 5)
                     com.sendData(package)
@@ -84,7 +87,7 @@ def main():
                     timeout = time.time() + 15
                     while(True):
                         print("Esperando confirmação de envio")
-                        received, nRx, overhead = com.getData()
+                        received, nRx, overhead, pacote_esperado = com.getData()
                         if (received == tipo7):
                             nome2=input("Como você gostaria de nomear o arquivo? : ")
                             nf = open(nome2, "wb")

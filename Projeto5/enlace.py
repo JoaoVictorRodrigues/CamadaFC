@@ -60,7 +60,7 @@ class enlace(object):
         """
         for i in range(len(lista_pacotes)):
             self.tx.sendBuffer(lista_pacotes[i])
-            print("Pacote: ", i+1, "de", len(lista_pacotes)+1)
+            print("Pacote: ", i+1, "de", len(lista_pacotes))
             time.sleep(1)
 
     def getData(self):
@@ -68,11 +68,11 @@ class enlace(object):
         Return the byte array and the size of the buffer
         """
         print('entrou na leitura e tentara ler ')
-        data, overhead = self.rx.getNData()
+        data, overhead, pacote_esperado = self.rx.getNData()
 
         self.rx.clearBuffer()
 
-        return(data, len(data), overhead)
+        return(data, len(data), overhead, pacote_esperado)
 
     def Synch_Client(self):
         #Etapa 1
@@ -83,7 +83,7 @@ class enlace(object):
         
         while(True):
             timeout = time.time() + 5
-            received , nRx, overhead = self.getData()
+            received , nRx, overhead, pacote_esperado = self.getData()
             if received == self.tipo2:
                 txLen3 = len(self.tipo3)
                 package = self.tx.organize_package(txLen3, self.tipo3, 3)
@@ -104,7 +104,7 @@ class enlace(object):
         print("Synching1")
         txLen2 = len(self.tipo2)
         while(True):
-            received, nRx, overhead = self.getData()
+            received, nRx, overhead, pacote_esperado = self.getData()
 
             if (received == self.tipo1):
                 package = self.tx.organize_package(txLen2, self.tipo2, 2)
@@ -113,7 +113,7 @@ class enlace(object):
 
                 while(True):
                     timeout = time.time() + 5
-                    received, nRx, overhead = self.getData()
+                    received, nRx, overhead, pacote_esperado = self.getData()
                     if(received == self.tipo3):
                         print("Synching Done")
                         self.rx.clearBuffer()
